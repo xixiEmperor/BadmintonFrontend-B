@@ -2,6 +2,11 @@ import request from '@/utils/request'
 import { ApiResponse, PaginationParams } from '@/types/apiTypes/common'
 import { Notice } from '@/types/apiTypes/notice'
 
+interface NoticeApi {
+  
+}
+
+
 /**
  * 管理员获取所有通知列表（包含草稿）
  * @param {Object} params - 查询参数
