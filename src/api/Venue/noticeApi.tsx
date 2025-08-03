@@ -1,10 +1,6 @@
-import request from '@/utils/request'
-import { ApiResponse, PaginationParams } from '@/types/apiTypes/common'
-import { Notice } from '@/types/apiTypes/notice'
-
-interface NoticeApi {
-  
-}
+import request from "@/utils/request"
+import { PaginationParams } from '@/types/apiTypes/common'
+import { createNoticeData } from "@/types/apiTypes/notice"
 
 
 /**
@@ -14,16 +10,10 @@ interface NoticeApi {
  * @param {number} [params.pageSize=10] - 每页数量
  * @returns {Promise<Object>} 通知列表
  */
-export function getAdminNoticeList(params: PaginationParams = { pageNum: 1, pageSize: 10 }): Promise<ApiResponse<Notice>> {
-  return request({
-    url: '/api/reservation/notice/admin',
-    method: 'get',
-    params: {
-      pageNum: params.pageNum,
-      pageSize: params.pageSize,
-    },
-  })
+export const getAdminNoticeList = (params: PaginationParams = { pageNum: 1, pageSize: 10 }) => {
+  return request.get('/api/reservation/notice/admin', { params })
 }
+
 
 /**
  * 创建通知（草稿）
@@ -33,16 +23,8 @@ export function getAdminNoticeList(params: PaginationParams = { pageNum: 1, page
  * @param {number} data.type - 通知类型：1-普通通知，2-重要通知
  * @returns {Promise<Object>} 创建结果
  */
-export function createNotice(data) {
-  return request({
-    url: '/api/reservation/notice',
-    method: 'post',
-    data: {
-      title: data.title,
-      content: data.content,
-      type: data.type,
-    },
-  })
+export const createNotice = (data: createNoticeData) => {
+  return request.post('/api/reservation/notice', data)
 }
 
 /**
@@ -54,16 +36,8 @@ export function createNotice(data) {
  * @param {number} data.type - 通知类型：1-普通通知，2-重要通知
  * @returns {Promise<Object>} 更新结果
  */
-export function updateNotice(id, data) {
-  return request({
-    url: `/api/reservation/notice/${id}`,
-    method: 'put',
-    data: {
-      title: data.title,
-      content: data.content,
-      type: data.type,
-    },
-  })
+export const updateNotice = (id: number, data: createNoticeData) => {
+  return request.put(`/api/reservation/notice/${id}`, data)
 }
 
 /**
@@ -71,11 +45,8 @@ export function updateNotice(id, data) {
  * @param {number} id - 通知ID
  * @returns {Promise<Object>} 发布结果
  */
-export function publishNotice(id) {
-  return request({
-    url: `/api/reservation/notice/${id}/publish`,
-    method: 'post',
-  })
+export const publishNotice = (id: number) => {
+  return request.post(`/api/reservation/notice/${id}/publish`)
 }
 
 /**
@@ -83,9 +54,6 @@ export function publishNotice(id) {
  * @param {number} id - 通知ID
  * @returns {Promise<Object>} 删除结果
  */
-export function deleteNotice(id) {
-  return request({
-    url: `/api/reservation/notice/${id}`,
-    method: 'delete',
-  })
+export const deleteNotice = (id: number) => {
+  return request.delete(`/api/reservation/notice/${id}`)
 }

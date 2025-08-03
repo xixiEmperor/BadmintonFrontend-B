@@ -169,8 +169,41 @@ class HttpRequest {
       data: data      // 设置请求体数据
     })
   }
+
+  /**
+   * 发送PUT请求
+   * @param url 请求地址
+   * @param data 可选的请求体数据
+   * @returns 返回Promise<AxiosResponse>
+   */
+  put(url: string, data?: unknown): Promise<AxiosResponse> {
+    // 调用request方法发送PUT请求
+    return this.request({
+      method: 'put', // 设置请求方法为PUT
+      url: url,      // 设置请求地址
+      data: data     // 设置请求体数据
+    })
+  }
+
+  /**
+   * 发送DELETE请求
+   * @param url 请求地址
+   * @param config 可选的axios配置参数
+   * @returns 返回Promise<AxiosResponse>
+   */
+  delete(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse> {
+    // 调用request方法发送DELETE请求
+    return this.request({
+      method: 'delete', // 设置请求方法为DELETE
+      url: url,        // 设置请求地址
+      ...config        // 合并额外的配置参数
+    })
+  }
 }
 
+
+const request = new HttpRequest('http://localhost:8080')
+
 // 导出HttpRequest类作为默认导出
-export default HttpRequest
+export default request
 
