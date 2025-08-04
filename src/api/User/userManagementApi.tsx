@@ -1,5 +1,5 @@
 import request from "@/utils/request"
-import { PaginationParams } from "@/types/apiTypes/common"
+import { GetUserListParams } from "@/types/apiTypes/userManagement"
 
 /**
  * 分页查询用户列表
@@ -10,7 +10,7 @@ import { PaginationParams } from "@/types/apiTypes/common"
  * @param {number} [params.size=10] - 每页数量
  * @returns {Promise<Object>} 分页用户列表
  */
-export const getUserList = (params: PaginationParams = { pageNum: 1, pageSize: 10 }) => {
+export const getUserList = (params: GetUserListParams = { page: 1, size: 10 }) => {
   return request.get('/api/user/admin/users', { params })
 }
 

@@ -1,5 +1,6 @@
 import request from "@/utils/request";
 import { PaginationParams } from "@/types/apiTypes/common";
+import { SetPostTopStatusData } from "@/types/apiTypes/forumManagement";
 
 // 删除帖子
 export const deletePostService = (postId: number) => {
@@ -12,6 +13,6 @@ export const getUserPosts = (params: PaginationParams) => {
 }
 
 // 设置帖子置顶状态
-export const setPostTopStatus = (postId: number, isTop: boolean) => {
-  return request.put(`/api/forum/posts/${postId}/top`, { isTop })
+export const setPostTopStatus = (postId: number, data: SetPostTopStatusData) => {
+  return request.put(`/api/forum/posts/${postId}/top`, data)
 }

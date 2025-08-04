@@ -1,5 +1,11 @@
 import request from "@/utils/request";
-import { PaginationParams } from "@/types/apiTypes/common";
+import {
+  GetProductsParams,
+  AddProductData,
+  UpdateProductData,
+  AddSpecificationData,
+  UpdateSpecificationData
+} from "@/types/apiTypes/products";
 /**
  * 获取商品列表
  * @param {Object} params 查询参数
@@ -10,7 +16,7 @@ import { PaginationParams } from "@/types/apiTypes/common";
  * @param {String} params.orderBy 排序方式：price_asc（价格升序）、price_desc（价格降序）、sales_desc（销量降序）
  * @returns {Promise} 返回商品列表数据
  */
-export const getProductsByAdmin = (params: PaginationParams) => {
+export const getProductsByAdmin = (params: GetProductsParams) => {
   return request.get('/api/mall/admin/products', { params })
 }
 
@@ -19,7 +25,7 @@ export const getProductsByAdmin = (params: PaginationParams) => {
  * @param {Number} productId 商品ID
  * @returns {Promise} 返回商品详细信息
  */
-export function getProductDetail(productId) {
+export function getProductDetail(productId: number) {
   return request.get(`/api/mall/products/${productId}`)
 }
 
@@ -28,10 +34,8 @@ export function getProductDetail(productId) {
  * @param {FormData} formData 包含商品图片的表单数据
  * @returns {Promise} 返回上传成功的图片URL
  */
-export function uploadProductImages(formData) {
-  return request.post('/api/mall/products/upload', formData, {
-    headers: { 'Content-Type': 'multipart/form-data' }
-  })
+export function uploadProductImages(formData: FormData) {
+  return request.post('/api/mall/products/upload', formData)
 }
 
 /**
@@ -39,7 +43,7 @@ export function uploadProductImages(formData) {
  * @param {Object} productData 商品数据
  * @returns {Promise} 返回添加结果
  */
-export function addProduct(productData) {
+export function addProduct(productData: AddProductData) {
   return request.post('/api/mall/products', productData)
 }
 
@@ -49,7 +53,7 @@ export function addProduct(productData) {
  * @param {Object} productData 更新的商品数据
  * @returns {Promise} 返回更新结果
  */
-export function updateProduct(productId, productData) {
+export function updateProduct(productId: number, productData: UpdateProductData) {
   return request.put(`/api/mall/products/${productId}`, productData)
 }
 
@@ -58,7 +62,7 @@ export function updateProduct(productId, productData) {
  * @param {Number} productId 商品ID
  * @returns {Promise} 返回上架结果
  */
-export function onSaleProduct(productId) {
+export function onSaleProduct(productId: number) {
   return request.put(`/api/mall/products/${productId}/on_sale`)
 }
 
@@ -67,7 +71,7 @@ export function onSaleProduct(productId) {
  * @param {Number} productId 商品ID
  * @returns {Promise} 返回下架结果
  */
-export function offSaleProduct(productId) {
+export function offSaleProduct(productId: number) {
   return request.put(`/api/mall/products/${productId}/off_sale`)
 }
 
@@ -76,7 +80,7 @@ export function offSaleProduct(productId) {
  * @param {Number} productId 商品ID
  * @returns {Promise} 返回删除结果
  */
-export function deleteProduct(productId) {
+export function deleteProduct(productId: number) {
   return request.delete(`/api/mall/products/${productId}`)
 }
 
@@ -86,7 +90,7 @@ export function deleteProduct(productId) {
  * @param {Number} stock 新的库存数量
  * @returns {Promise} 返回更新库存结果
  */
-export function updateProductStock(productId, stock) {
+export function updateProductStock(productId: number, stock: number) {
   return request.put(`/api/mall/products/${productId}/stock`, { stock })
 }
 
@@ -96,7 +100,7 @@ export function updateProductStock(productId, stock) {
  * @param {Number} productId 商品ID
  * @returns {Promise} 返回规格列表
  */
-export function getProductSpecifications(productId) {
+export function getProductSpecifications(productId: number) {
   return request.get(`/api/mall/products/${productId}/specifications`)
 }
 
@@ -106,7 +110,7 @@ export function getProductSpecifications(productId) {
  * @param {Object} specifications 规格条件，如{"color":"红色","size":"S"}
  * @returns {Promise} 返回匹配的规格信息
  */
-export function getProductSpecification(productId, specifications) {
+export function getProductSpecification(productId: number, specifications: Record<string, string>) {
   return request.post(`/api/mall/products/${productId}/specification`, specifications)
 }
 
@@ -115,7 +119,7 @@ export function getProductSpecification(productId, specifications) {
  * @param {Number} productId 商品ID
  * @returns {Promise} 返回规格选项列表
  */
-export function getProductSpecOptions(productId) {
+export function getProductSpecOptions(productId: number) {
   return request.get(`/api/mall/products/${productId}/spec_options`)
 }
 
@@ -129,10 +133,8 @@ export function getProductSpecOptions(productId) {
  * @param {Number} specData.status 状态：1-正常，0-禁用，默认为1
  * @returns {Promise} 返回添加结果
  */
-export function addProductSpecification(productId, specData, options = {}) {
-  return request.post(`/api/mall/products/${productId}/specifications`, specData, {
-    signal: options.signal
-  })
+export function addProductSpecification(productId: number, specData: AddSpecificationData) {
+  return request.post(`/api/mall/products/${productId}/specifications`, specData)
 }
 
 /**
@@ -141,7 +143,7 @@ export function addProductSpecification(productId, specData, options = {}) {
  * @param {Object} specData 更新的规格数据
  * @returns {Promise} 返回更新结果
  */
-export function updateSpecification(specificationId, specData) {
+export function updateSpecification(specificationId: number, specData: UpdateSpecificationData) {
   return request.put(`/api/mall/specifications/${specificationId}`, specData)
 }
 
@@ -150,7 +152,7 @@ export function updateSpecification(specificationId, specData) {
  * @param {Number} specificationId 规格ID
  * @returns {Promise} 返回删除结果
  */
-export function deleteSpecification(specificationId) {
+export function deleteSpecification(specificationId: number) {
   return request.delete(`/api/mall/specifications/${specificationId}`)
 }
 
@@ -160,6 +162,6 @@ export function deleteSpecification(specificationId) {
  * @param {Number} stock 新的库存数量
  * @returns {Promise} 返回更新库存结果
  */
-export function updateSpecificationStock(specificationId, stock) {
+export function updateSpecificationStock(specificationId: number, stock: number) {
   return request.put(`/api/mall/specifications/${specificationId}/stock`, { stock })
 }

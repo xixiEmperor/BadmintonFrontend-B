@@ -1,3 +1,6 @@
+import request from "@/utils/request";
+import { GetAdminOrdersParams, ApproveRefundData, CancelReservationData } from "@/types/apiTypes/bookingReview";
+
 /**
  * 管理员查询所有订单
  * @param {Object} params - 查询参数
@@ -10,12 +13,8 @@
  * @param {string} [params.endDate] - 结束日期，格式：yyyy-MM-dd
  * @returns {Promise}
  */
-export function getAdminOrders(params = {}) {
-  return request({
-    url: '/api/reservations/admin/orders',
-    method: 'get',
-    params
-  })
+export const getAdminOrders = (params: GetAdminOrdersParams = {}) => {
+  return request.get('/api/reservations/admin/orders', { params })
 }
 
 /**
@@ -23,11 +22,8 @@ export function getAdminOrders(params = {}) {
  * @param {number} id - 订单ID
  * @returns {Promise}
  */
-export function completeOrder(id) {
-  return request({
-    url: `/api/reservations/admin/${id}/complete`,
-    method: 'post'
-  })
+export const completeOrder = (id: number) => {
+  return request.post(`/api/reservations/admin/${id}/complete`)
 }
 
 /**
@@ -38,12 +34,8 @@ export function completeOrder(id) {
  * @param {string} [data.adminRemark] - 管理员备注
  * @returns {Promise}
  */
-export function approveRefund(id, params) {
-  return request({
-    url: `/api/reservations/admin/${id}/approve-refund`,
-    method: 'post',
-    params
-  })
+export const approveRefund = (id: number, data: ApproveRefundData) => {
+  return request.post(`/api/reservations/admin/${id}/approve-refund`, data)
 }
 
 /**
@@ -53,10 +45,6 @@ export function approveRefund(id, params) {
  * @param {string} [data.reason] - 取消原因
  * @returns {Promise}
  */
-export function cancelReservation(id, data = {}) {
-  return request({
-    url: `/api/reservations/${id}/cancel`,
-    method: 'post',
-    data
-  })
+export const cancelReservation = (id: number, data: CancelReservationData = {}) => {
+  return request.post(`/api/reservations/${id}/cancel`, data)
 }

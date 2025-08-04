@@ -1,4 +1,4 @@
-import { PaginationParams } from "@/types/apiTypes/common";
+import { GetOrdersParams } from "@/types/apiTypes/orders";  
 import request from "@/utils/request";
 
 /**
@@ -10,7 +10,7 @@ import request from "@/utils/request";
  * @param {Long} params.orderNo 订单号精确搜索
  * @returns {Promise} 返回订单列表数据
  */
-export const getOrdersByAdmin = (params: PaginationParams) => {
+export const getOrdersByAdmin = (params: GetOrdersParams) => {
   return request.get('/api/mall/orders/admin', { params })
 }
 
