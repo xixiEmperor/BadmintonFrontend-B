@@ -1,3 +1,4 @@
+import React from 'react'
 import { Outlet, useLocation, useNavigate, Link } from 'react-router-dom'
 import { 
   Layout, 
@@ -162,92 +163,30 @@ export default function Admin() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
-      <Layout style={{ minHeight: '100vh', background: 'transparent' }}>
+    <div className="min-h-screen bg-gray-50">
+      <Layout style={{ minHeight: '100vh', background: '#f9fafb' }}>
         <Sider 
-          width={260} 
+          width={240} 
           style={{
-            background: '#111827',
-            borderRight: '1px solid #1f2937',
+            background: '#001529',
+            borderRight: '1px solid #e5e7eb',
           }}
         >
           {/* Logo区域 */}
           <div style={{ 
-            padding: '20px 16px', 
+            padding: '16px', 
             textAlign: 'center',
-            borderBottom: '1px solid #1f2937',
-            background: '#0f172a',
+            borderBottom: '1px solid #1e3a8a',
+            background: '#001529',
           }}>
-            <Title level={4} style={{ 
-              color: '#3b82f6',
+            <Title level={5} style={{ 
+              color: '#ffffff',
               margin: 0,
-              fontWeight: 'bold',
+              fontWeight: 'normal',
             }}>
               羽毛球场地管理系统
             </Title>
           </div>
-
-          {/* 自定义深色菜单样式 */}
-          <style>
-            {`
-              .ant-menu-dark {
-                background: transparent !important;
-                color: #d1d5db !important;
-              }
-              .ant-menu-dark .ant-menu-item {
-                background: transparent !important;
-                color: #d1d5db !important;
-                border-radius: 6px !important;
-                margin: 4px 12px !important;
-                transition: all 0.2s ease !important;
-              }
-              .ant-menu-dark .ant-menu-item:hover {
-                background: #1f2937 !important;
-                color: #3b82f6 !important;
-              }
-              .ant-menu-dark .ant-menu-item-selected {
-                background: #1e40af !important;
-                color: #ffffff !important;
-              }
-              .ant-menu-dark .ant-menu-submenu-title {
-                background: transparent !important;
-                color: #d1d5db !important;
-                border-radius: 6px !important;
-                margin: 4px 12px !important;
-                transition: all 0.2s ease !important;
-              }
-              .ant-menu-dark .ant-menu-submenu-title:hover {
-                background: #1f2937 !important;
-                color: #3b82f6 !important;
-              }
-              .ant-menu-dark .ant-menu-submenu-open > .ant-menu-submenu-title {
-                color: #3b82f6 !important;
-                background: #1f2937 !important;
-              }
-              .ant-menu-dark .ant-menu-sub {
-                background: #0f172a !important;
-                border-radius: 6px !important;
-                margin: 0 12px !important;
-              }
-              .ant-menu-dark .ant-menu-item .anticon {
-                color: #6b7280 !important;
-                margin-right: 12px !important;
-              }
-              .ant-menu-dark .ant-menu-submenu-title .anticon {
-                color: #6b7280 !important;
-                margin-right: 12px !important;
-              }
-              .ant-menu-dark .ant-menu-item:hover .anticon {
-                color: #3b82f6 !important;
-              }
-              .ant-menu-dark .ant-menu-submenu-title:hover .anticon {
-                color: #3b82f6 !important;
-              }
-              .ant-menu-dark .ant-menu-item-selected .anticon {
-                color: #ffffff !important;
-              }
-            `}
-          </style>
 
           <Menu
             mode="inline"
@@ -258,34 +197,37 @@ export default function Admin() {
             onClick={handleMenuClick}
             style={{ 
               borderRight: 0,
-              background: 'transparent',
-              padding: '16px 4px'
+              background: '#001529',
             }}
           />
         </Sider>
         
         <Layout style={{ 
-          background: 'transparent', 
-          marginLeft: '20px', 
+          background: '#f9fafb', 
         }}>
           {/* Header */}
           <Header 
             style={{ 
-              marginTop: '10px',
               padding: '0 24px', 
-              background: '#1f2937',
+              background: '#ffffff',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              borderBottom: '1px solid #374151',
-              borderRadius: '10px',
+              borderBottom: '1px solid #e5e7eb',
+              boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
             }}
           >
             <Breadcrumb
-              items={getBreadcrumbItems()}
+              items={getBreadcrumbItems().map(item => ({
+                ...item,
+                title: typeof item.title === 'string' ? item.title : 
+                       React.cloneElement(item.title as React.ReactElement<{ style?: React.CSSProperties }>, {
+                         style: { color: '#374151' }
+                       })
+              }))}
               style={{ 
                 margin: 0,
-                color: 'white'
+                color: '#374151'
               }}
             />
             
@@ -300,11 +242,12 @@ export default function Admin() {
                 cursor: 'pointer',
                 padding: '8px 16px',
                 borderRadius: '6px',
-                color: '#ffffff',
+                color: '#374151',
                 transition: 'all 0.2s ease'
               }}
+              className="hover:bg-gray-100"
               >
-                <span className='font-bold hover:text-blue-500'>管理员</span>
+                <span className='font-medium hover:text-blue-600'>管理员</span>
                 <DownOutlined />
               </Space>
             </Dropdown>
@@ -314,16 +257,17 @@ export default function Admin() {
           <Content
             style={{
               minHeight: 280,
-              background: 'transparent',
-              marginTop: '25px',
+              background: '#f9fafb',
+              padding: '24px',
             }}
           >
             <div style={{ 
-              background: '#1f2937',
+              background: '#ffffff',
               padding: '24px', 
-              borderRadius: '8px',
+              borderRadius: '6px',
               minHeight: 'calc(100vh - 112px)',
-              border: '1px solid #374151',
+              border: '1px solid #e5e7eb',
+              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
             }}>
               <Outlet />
             </div>
