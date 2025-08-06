@@ -1,11 +1,16 @@
 import Card from '@/components/shared/Card'
 import { UserOutlined } from '@ant-design/icons'
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { getDashboardOverview } from '@/api/DashBoard/dashBoardApi'
 import type { statisticsData } from './types/returnData'
+import { useAppDispatch, useAppSelector } from '@/store/index'
+import { setDashBoardData } from '@/store/dashboard/DashBoardStore'
+
+
 
 export default function Statistics() {
-    const [statistics, setStatistics] = useState<statisticsData | null>(null)
+    const dispatch = useAppDispatch()
+    const dashBoardData: statisticsData = useAppSelector((state) => state.dashBoard.dashBoardData)
 
     useEffect(() => {
         let isMounted = true // 用于检查组件是否仍然挂载
@@ -15,7 +20,7 @@ export default function Statistics() {
                 const res = await getDashboardOverview()
                 // 只有在组件仍然挂载时才更新状态
                 if (isMounted) {
-                    setStatistics(res.data)
+                    dispatch(setDashBoardData(res.data))
                 }
             } catch (error) {
                 // 忽略取消错误，只记录其他错误
@@ -36,39 +41,39 @@ export default function Statistics() {
     }, [])
 
     const statisticsCards = useMemo(() => {
-        if (!statistics) return []
+        if (!dashBoardData) return []
         
         return [
             {
                 title: '用户总数',
-                value: statistics.totalUsers,
+                value: dashBoardData.totalUsers,
                 icon: <UserOutlined />,
-                increment: statistics.newUsersToday,
+                increment: dashBoardData.newUsersToday,
                 incrementDesc: '今日新增'
             },
             {
                 title: '预约总数',
-                value: statistics.totalReservations,
+                value: dashBoardData.totalReservations,
                 icon: <UserOutlined />,
-                increment: statistics.reservationsToday,
+                increment: dashBoardData.reservationsToday,
                 incrementDesc: '今日预约'
             },
             {
                 title: '总收入',
-                value: statistics.reservationRevenue,
+                value: dashBoardData.reservationRevenue,
                 icon: <UserOutlined />,
-                increment: statistics.revenueToday,
+                increment: dashBoardData.revenueToday,
                 incrementDesc: '今日收入'
             },
             {
                 title: '商城订单',
-                value: statistics.totalOrders,
+                value: dashBoardData.totalOrders,
                 icon: <UserOutlined />,
-                increment: statistics.ordersToday,
+                increment: dashBoardData.ordersToday,
                 incrementDesc: '今日订单'
             },
         ]
-    }, [statistics])
+    }, [dashBoardData])
 
     return (
         <div className="flex flex-wrap justify-between items-center">
