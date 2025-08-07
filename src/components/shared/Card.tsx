@@ -16,20 +16,15 @@ interface VenueCardProps {
   price: string
 }
 
-interface EchartsCardProps {
-  title: string
-  value: number 
-}
-
 interface OrdersCardProps {
   title: string
   value: number
 }
 
-type CardChildren = (StatisticsCardProps | VenueCardProps | EchartsCardProps | OrdersCardProps)
+type CardChildren = (StatisticsCardProps | VenueCardProps | OrdersCardProps)
 
 interface CardProps {
-  type: 'statistics' | 'venue' | 'echarts' | 'orders'
+  type: 'statistics' | 'venue' | 'orders'
   content: CardChildren
   className?: string
 }
