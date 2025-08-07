@@ -1,7 +1,9 @@
-export default function VenueManagement() {
+import VenueManagement from '@/components/venue/venueManagement/index'
+
+export default function VenueManagementPage() {
     return (
-        <div>
-            <h1>VenueManagement</h1>
-        </div>
+        <>
+            <VenueManagement />
+        </>
     )
 }

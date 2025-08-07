@@ -52,9 +52,9 @@ export default function Card({ type, content, className }: CardProps) {
       case 'venue': {
         const { venueName, venueOrder, position, state, price } = content as VenueCardProps
         return (
-          <div className={`relative w-[24vw] min-h-[150px] rounded-lg bg-white p-6 flex justify-start items-center gap-4 shadow-sm border border-gray-200 hover:shadow-md transition-shadow ${className || ''}`}>
+          <div className={`relative w-[16vw] min-h-[150px] rounded-lg bg-white p-6 flex justify-start items-center gap-4 shadow-lg border border-gray-300 hover:shadow-md transition-shadow ${className || ''}`}>
             {/* 状态开关按钮  */}
-            <div className='absolute top-[20px] right-[60px]'>  
+            <div className='absolute top-[20px] right-[20px]'>  
               <label className='cursor-pointer flex items-center gap-2'>
                 <span className={`${state === 2 ? 'text-[#989ca2]' : 'text-[#00b6ff]'}`}>不可用</span>
                 <input type="checkbox" defaultChecked className="toggle toggle-info" />
@@ -82,7 +82,7 @@ export default function Card({ type, content, className }: CardProps) {
               <p className='text-sm font-semibold text-gray-600 mt-2'>价格:{price}</p>
 
               {/* 按钮组 */}
-              <div className='w-3/4 flex items-center justify-between mt-4'>
+              <div className='w-full flex items-center justify-between mt-4'>
                 <button className='btn btn-sm btn-outline'>
                   查看详情
                 </button>

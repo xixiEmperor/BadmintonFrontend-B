@@ -261,14 +261,7 @@ export default function Admin() {
               padding: '24px',
             }}
           >
-            <div style={{ 
-              background: '#ffffff',
-              padding: '24px', 
-              borderRadius: '6px',
-              minHeight: 'calc(100vh - 112px)',
-              border: '1px solid #e5e7eb',
-              boxShadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1)',
-            }}>
+            <div>
               <Outlet />
             </div>
           </Content>

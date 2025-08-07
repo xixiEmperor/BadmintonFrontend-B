@@ -1,4 +1,4 @@
-import Chart from './Chart'
+import Chart from '@/components/shared/Chart'
 import { 
     getUserRegistrationTrend,
     getUserRoleDistribution,
