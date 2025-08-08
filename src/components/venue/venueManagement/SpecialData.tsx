@@ -1,5 +1,4 @@
 import { Button } from "antd"
-import type { MenuProps } from "antd"
 
 export default function SpecialData() {
     return (

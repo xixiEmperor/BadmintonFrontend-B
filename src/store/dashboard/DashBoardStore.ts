@@ -1,18 +1,14 @@
-import { createSlice } from "@reduxjs/toolkit";
-import type { statisticsData } from "@/components/dashBoard/types/returnData";
+import { create } from 'zustand'
+import type { statisticsData } from '@/components/dashBoard/types/returnData'
 
-const dashBoardSlice = createSlice({
-  name: 'dashBoard',
-  initialState: {
-    dashBoardData: {} as statisticsData,
-  },
-  reducers: {
-    setDashBoardData: (state, action) => {
-      state.dashBoardData = action.payload;
-    },
-  },
-});
+type DashBoardState = {
+  dashBoardData: statisticsData | null
+  setDashBoardData: (data: statisticsData) => void
+}
 
-export const { setDashBoardData } = dashBoardSlice.actions;
+export const useDashBoardStore = create<DashBoardState>((set) => ({
+  dashBoardData: null,
+  setDashBoardData: (data) => set({ dashBoardData: data })
+}))
 
-export default dashBoardSlice.reducer;
+export default useDashBoardStore

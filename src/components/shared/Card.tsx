@@ -8,12 +8,13 @@ interface StatisticsCardProps {
   incrementDesc?: string
 }
 
-interface VenueCardProps {
-  venueName: string
-  venueOrder: string
-  position: string
-  state: 1 | 2 // 1: 可用 2: 占用
-  price: string
+export interface VenueCardProps {
+  id: number
+  name: string
+  location: string
+  status: 1 | 2 // 1: 可用 2: 占用
+  statusDesc?: string
+  pricePerHour: number
 }
 
 interface OrdersCardProps {
@@ -50,36 +51,36 @@ export default function Card({ type, content, className }: CardProps) {
       }
 
       case 'venue': {
-        const { venueName, venueOrder, position, state, price } = content as VenueCardProps
+        const { id, name, location, status, pricePerHour } = content as VenueCardProps
         return (
           <div className={`relative w-[16vw] min-h-[150px] rounded-lg bg-white p-6 flex justify-start items-center gap-4 shadow-lg border border-gray-300 hover:shadow-md transition-shadow ${className || ''}`}>
             {/* 状态开关按钮  */}
             <div className='absolute top-[20px] right-[20px]'>  
               <label className='cursor-pointer flex items-center gap-2'>
-                <span className={`${state === 2 ? 'text-[#989ca2]' : 'text-[#00b6ff]'}`}>不可用</span>
+                <span className={`${status === 2 ? 'text-[#989ca2]' : 'text-[#00b6ff]'}`}>不可用</span>
                 <input type="checkbox" defaultChecked className="toggle toggle-info" />
-                <span className={`${state === 1 ? 'text-[#00b6ff]' : 'text-[#989ca2]'}`}>可用</span>
+                <span className={`${status === 1 ? 'text-[#00b6ff]' : 'text-[#989ca2]'}`}>可用</span>
               </label>
             </div>
 
             <div className='flex flex-col items-start justify-center flex-1 text-black'>
 
               {/* 场馆信息 */}
-              <h3 className='text-black text-lg font-700 mb-1'>{venueName}</h3>
+              <h3 className='text-black text-lg font-700 mb-1'>{name}</h3>
 
               {/* 后期用map返回p标签 */}
-              <p className='text-sm font-semibold text-gray-600 mt-2'>场地编号：{venueOrder}</p>
-              <p className='text-sm font-semibold text-gray-600 mt-2'>场地位置：{position}</p>
+              <p className='text-sm font-semibold text-gray-600 mt-2'>场地编号：{'V' + id}</p>
+              <p className='text-sm font-semibold text-gray-600 mt-2'>场地位置：{location}</p>
               <p className='text-sm font-semibold text-gray-600 mt-2'>
                 状态：{
-                  state === 1 ? (
+                  status === 1 ? (
                     <div className='badge badge-info text-white'>可用</div>
                   ) : (
                     <div className='badge badge-error text-white'>不可用</div>
                   )
                 }
               </p>
-              <p className='text-sm font-semibold text-gray-600 mt-2'>价格:{price}</p>
+              <p className='text-sm font-semibold text-gray-600 mt-2'>价格:{pricePerHour}</p>
 
               {/* 按钮组 */}
               <div className='w-full flex items-center justify-between mt-4'>

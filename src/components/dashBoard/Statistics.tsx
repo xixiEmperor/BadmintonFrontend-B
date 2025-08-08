@@ -3,14 +3,13 @@ import { UserOutlined } from '@ant-design/icons'
 import { useEffect, useMemo } from 'react'
 import { getDashboardOverview } from '@/api/DashBoard/dashBoardApi'
 import type { statisticsData } from './types/returnData'
-import { useAppDispatch, useAppSelector } from '@/store/index'
-import { setDashBoardData } from '@/store/dashboard/DashBoardStore'
+import { useDashBoardStore } from '@/store'
 
 
 
 export default function Statistics() {
-    const dispatch = useAppDispatch()
-    const dashBoardData: statisticsData = useAppSelector((state) => state.dashBoard.dashBoardData)
+    const dashBoardData = useDashBoardStore((s) => s.dashBoardData) as statisticsData | null
+    const setDashBoardData = useDashBoardStore((s) => s.setDashBoardData)
 
     useEffect(() => {
         let isMounted = true // 用于检查组件是否仍然挂载
@@ -18,10 +17,7 @@ export default function Statistics() {
         const fetchData = async () => {
             try {
                 const res = await getDashboardOverview()
-                // 只有在组件仍然挂载时才更新状态
-                if (isMounted) {
-                    dispatch(setDashBoardData(res.data))
-                }
+                if (isMounted) setDashBoardData(res.data)
             } catch (error) {
                 // 忽略取消错误，只记录其他错误
                 if (error instanceof Error && error.name !== 'CanceledError' && isMounted) {

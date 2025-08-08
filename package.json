@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@ant-design/icons": "5.x",
-    "@reduxjs/toolkit": "^2.8.2",
     "@tanstack/react-query": "^5.84.1",
     "antd": "^5.26.7",
     "axios": "^1.11.0",
@@ -20,8 +19,8 @@
     "echarts": "^6.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
-    "react-redux": "^9.2.0",
-    "react-router-dom": "^7.7.1"
+    "react-router-dom": "^7.7.1",
+    "zustand": "^5.0.7"
   },
   "devDependencies": {
     "@eslint/js": "^9.30.1",

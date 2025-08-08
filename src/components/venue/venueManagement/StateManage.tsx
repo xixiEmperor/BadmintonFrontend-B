@@ -1,8 +1,18 @@
 import { Button, Dropdown } from "antd"
 import type { MenuProps } from "antd"
 import Card from "../../shared/Card"
+import { useEffect } from 'react'
+import { useVenueStore } from "@/store"
 
 export default function StateManage() {
+    const venueList = useVenueStore((s) => s.venueList)
+    const fetchVenueList = useVenueStore((s) => s.fetchVenueList)
+
+    useEffect(() => {
+        fetchVenueList()
+    }, [fetchVenueList])
+
+    console.log(venueList)
     const items: MenuProps['items'] = [
         {
             key: '1',
@@ -26,20 +36,19 @@ export default function StateManage() {
                         <Button>场地状态</Button>
                     </Dropdown>
                     <Button variant="solid" color="blue">添加场地</Button>
-                    <Button variant="solid" color="danger">删除场地</Button>
+                    <Button variant="solid" color="danger">批量操作</Button>
                 </div>
             </div>
             <hr className="mb-4"/>
-            <Card 
-                type="venue" 
-                content={{
-                    venueName: '场地1',
-                    venueOrder: '1',
-                    position: '1',
-                    state: 1,
-                    price: '100'
-                }} 
-            />
+            <div className="flex flex-wrap gap-8">
+                {venueList.map((venue) => (
+                    <Card 
+                        type="venue" 
+                        key={venue.id}
+                        content={venue} 
+                    />
+                ))}
+            </div>
         </div>
     )
 }
