@@ -1,7 +1,12 @@
+/**
+ * 通用图表组件（ECharts）
+ * - 由父组件传入拉取数据的方法与参数
+ * - 根据后端返回的 type 渲染 pie/bar/line
+ */
 import { useEffect, useRef } from 'react'
 import * as echarts from 'echarts'
 import type { chartParams, ChartApiResponse } from '@/types/apiTypes/dashBoard'
-import { AxiosResponse } from 'axios'
+import type { AxiosResponse } from 'axios'
 
 interface ChartProps {
   id: string
@@ -190,7 +195,7 @@ export default function Chart({
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4">
-      {title && !title && (
+      {title && (
         <h3 className="text-lg font-semibold mb-4 text-center">{title}</h3>
       )}
       <div 

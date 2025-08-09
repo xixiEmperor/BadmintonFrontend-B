@@ -1,3 +1,7 @@
+/**
+ * 仪表盘图表集合
+ * - 固定配置的多个图表，调用后端接口获取数据
+ */
 import Chart from '@/components/shared/Chart'
 import { 
     getUserRegistrationTrend,
@@ -7,8 +11,8 @@ import {
     getReservationStatusDistribution,
     getRevenueTrend,
  } from "@/api/DashBoard/dashBoardApi"
-import { AxiosResponse } from "axios"
-import { chartParams, ChartApiResponse } from "@/types/apiTypes/dashBoard"
+import type { AxiosResponse } from "axios"
+import type { chartParams, ChartApiResponse } from "@/types/apiTypes/dashBoard"
 
 interface ChartItemType {
     id: string

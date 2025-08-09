@@ -1,3 +1,8 @@
+/**
+ * 路由配置
+ * - 使用 React Router v7 createBrowserRouter
+ * - 每个子路由通过 handle.meta.title 提供标题，配合 `useChangeTitle`
+ */
 import { createBrowserRouter, Navigate } from 'react-router-dom'
 import { ROUTES } from '@/types/routes'
 import { lazy } from 'react'

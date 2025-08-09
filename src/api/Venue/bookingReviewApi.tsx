@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import { GetAdminOrdersParams, ApproveRefundData, CancelReservationData } from "@/types/apiTypes/bookingReview";
+import type { GetAdminOrdersParams, ApproveRefundData, CancelReservationData } from "@/types/apiTypes/bookingReview";
 
 /**
  * 管理员查询所有订单
@@ -34,8 +34,16 @@ export const completeOrder = (id: number) => {
  * @param {string} [data.adminRemark] - 管理员备注
  * @returns {Promise}
  */
+// 审批退款
+// 注意：后端使用 @RequestParam，必须以查询参数传递 approved/adminRemark
+// 路径: POST /api/reservations/admin/{id}/approve-refund?approved=true&adminRemark=xxx
 export const approveRefund = (id: number, data: ApproveRefundData) => {
-  return request.post(`/api/reservations/admin/${id}/approve-refund`, data)
+  const params = new URLSearchParams()
+  // 必填：approved
+  params.set('approved', String(data.approved))
+  // 可选：管理员备注
+  if (data.adminRemark) params.set('adminRemark', data.adminRemark)
+  return request.post(`/api/reservations/admin/${id}/approve-refund?${params.toString()}`)
 }
 
 /**

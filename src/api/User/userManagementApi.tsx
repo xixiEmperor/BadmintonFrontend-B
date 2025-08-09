@@ -1,5 +1,5 @@
 import request from "@/utils/request"
-import { GetUserListParams } from "@/types/apiTypes/userManagement"
+import type { GetUserListParams } from "@/types/apiTypes/userManagement"
 
 /**
  * 分页查询用户列表

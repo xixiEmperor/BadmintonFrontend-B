@@ -1,11 +1,23 @@
 import request from "@/utils/request";
-import {
+import type {
   GetProductsParams,
   AddProductData,
   UpdateProductData,
   AddSpecificationData,
-  UpdateSpecificationData
+  UpdateSpecificationData,
+  Category
 } from "@/types/apiTypes/products";
+
+// 后端 ProductAddDto 要求 subImages 为以逗号分隔的字符串
+function normalizeProductPayload(data: AddProductData | UpdateProductData) {
+  const payload: Record<string, unknown> = { ...data }
+  if (Array.isArray((payload as any).subImages)) {
+    const arr: string[] = (payload as any).subImages as string[]
+    if (arr.length > 0) payload.subImages = arr.join(',')
+    else delete payload.subImages
+  }
+  return payload
+}
 /**
  * 获取商品列表
  * @param {Object} params 查询参数
@@ -35,7 +47,13 @@ export function getProductDetail(productId: number) {
  * @returns {Promise} 返回上传成功的图片URL
  */
 export function uploadProductImages(formData: FormData) {
-  return request.post('/api/mall/products/upload', formData)
+  // 以 multipart/form-data 提交，避免被默认 application/json 覆盖
+  return request.request({
+    method: 'post',
+    url: '/api/mall/products/upload',
+    data: formData,
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
 }
 
 /**
@@ -44,7 +62,8 @@ export function uploadProductImages(formData: FormData) {
  * @returns {Promise} 返回添加结果
  */
 export function addProduct(productData: AddProductData) {
-  return request.post('/api/mall/products', productData)
+  const body = normalizeProductPayload(productData)
+  return request.post('/api/mall/products', body)
 }
 
 /**
@@ -54,7 +73,8 @@ export function addProduct(productData: AddProductData) {
  * @returns {Promise} 返回更新结果
  */
 export function updateProduct(productId: number, productData: UpdateProductData) {
-  return request.put(`/api/mall/products/${productId}`, productData)
+  const body = normalizeProductPayload(productData)
+  return request.put(`/api/mall/products/${productId}`, body)
 }
 
 /**
@@ -164,4 +184,11 @@ export function deleteSpecification(specificationId: number) {
  */
 export function updateSpecificationStock(specificationId: number, stock: number) {
   return request.put(`/api/mall/specifications/${specificationId}/stock`, { stock })
+}
+
+/**
+ * 获取商品分类
+ */
+export function getCategories() {
+  return request.get('/api/mall/categories') as unknown as Promise<{ data: Category[] }>
 }

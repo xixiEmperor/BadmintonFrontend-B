@@ -1,5 +1,9 @@
+/**
+ * 仪表盘 Store
+ * - 缓存仪表盘 overview 数据
+ */
 import { create } from 'zustand'
-import type { statisticsData } from '@/components/dashBoard/types/returnData'
+import type { statisticsData } from '@/components/Dashboard/types/returnData'
 
 type DashBoardState = {
   dashBoardData: statisticsData | null

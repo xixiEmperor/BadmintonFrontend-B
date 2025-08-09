@@ -1,4 +1,4 @@
-import { GetOrdersParams } from "@/types/apiTypes/orders";  
+import type { GetOrdersParams } from "@/types/apiTypes/orders";  
 import request from "@/utils/request";
 
 /**

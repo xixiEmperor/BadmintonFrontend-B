@@ -1,5 +1,9 @@
+/**
+ * 场地管理聚合页
+ * - 包含：状态管理 + 特殊日期管理
+ */
 import StateManage from './StateManage'
-import SpecialDateManage from './SpecialData'
+import SpecialDateManage from '../specialDate/SpecialData'
 
 export default function VenueManagement() {
     return (

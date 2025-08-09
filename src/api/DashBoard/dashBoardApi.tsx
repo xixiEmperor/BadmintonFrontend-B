@@ -1,5 +1,5 @@
 import request from '@/utils/request'
-import { periodParams, revenueTrendParams, limitParams } from '@/types/apiTypes/dashBoard'
+import type { periodParams, revenueTrendParams, limitParams } from '@/types/apiTypes/dashBoard'
 
 /**
  * 获取仪表板概览数据

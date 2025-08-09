@@ -1,3 +1,8 @@
+/**
+ * 仪表盘统计卡片
+ * - 进入页面拉取 overview 数据，存入 zustand
+ * - useMemo 生成卡片配置并渲染
+ */
 import Card from '@/components/shared/Card'
 import { UserOutlined } from '@ant-design/icons'
 import { useEffect, useMemo } from 'react'
@@ -34,7 +39,7 @@ export default function Statistics() {
         return () => {
             isMounted = false
         }
-    }, [])
+  }, [setDashBoardData])
 
     const statisticsCards = useMemo(() => {
         if (!dashBoardData) return []

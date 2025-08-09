@@ -19,5 +19,14 @@ export default tseslint.config([
       ecmaVersion: 2020,
       globals: globals.browser,
     },
+    rules: {
+      // 放宽显式 any 的限制，部分第三方库与服务响应结构较为动态
+      '@typescript-eslint/no-explicit-any': 'off',
+      // 允许以下划线开头的未使用参数（如错误对象、解构占位）
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_' }
+      ],
+    },
   },
 ])

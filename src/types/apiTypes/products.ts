@@ -1,10 +1,11 @@
-import {PaginationParams} from '@/types/apiTypes/common'
+import type { PaginationParams } from '@/types/apiTypes/common'
 
 // 获取商品列表的查询参数
 export interface GetProductsParams extends PaginationParams {
   categoryId?: string
   keyword?: string
   orderBy?: 'price_asc' | 'price_desc' | 'sales_desc'
+  status?: 0 | 1
 }
 
 // 商品数据接口
@@ -15,12 +16,14 @@ export interface ProductData {
   subtitle?: string
   price: number
   categoryId: number
+  categoryName?: string
   mainImage?: string
   subImages?: string[]
   detail?: string
   status: number // 1-上架，0-下架
   stock: number
   sales?: number
+  hasSpecification?: 0 | 1
   createTime?: string
   updateTime?: string
 }
@@ -37,6 +40,7 @@ export interface AddProductData {
   detail?: string
   status?: number
   stock: number
+  hasSpecification?: 0 | 1
 }
 
 // 更新商品的请求数据
@@ -51,6 +55,7 @@ export interface UpdateProductData {
   detail?: string
   status?: number
   stock?: number
+  hasSpecification?: 0 | 1
 }
 
 // 更新库存的请求数据
@@ -95,4 +100,10 @@ export interface ProductSpecOption {
 // 上传选项接口
 export interface UploadOptions {
   signal?: AbortSignal
+}
+
+// 分类
+export interface Category {
+  id: number
+  name: string
 }

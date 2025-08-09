@@ -1,3 +1,8 @@
+/**
+ * 后台布局页
+ * - 左侧导航 Sider + 顶部 Header + 面包屑 + 右侧内容区
+ * - 负责导航跳转、用户下拉操作、面包屑渲染
+ */
 import React from 'react'
 import { Outlet, useLocation, useNavigate, Link } from 'react-router-dom'
 import { 
@@ -18,7 +23,7 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons'
 import type { MenuProps } from 'antd'
-import { BreadcrumbConfig } from '@/types/adminConfig'
+import type { BreadcrumbConfig } from '@/types/adminConfig'
 import { useChangeTitle } from '@/hooks/useChangeTitle'
 const { Header, Content, Sider } = Layout
 const { Title } = Typography

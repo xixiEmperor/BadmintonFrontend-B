@@ -1,14 +1,11 @@
 /**
- * HTTP请求封装工具类
- * 基于axios的二次封装，提供统一的请求拦截、响应拦截、取消重复请求等功能
- * 支持自动添加认证token、统一错误处理、请求超时设置等
+ * HTTP 请求封装工具类
+ * 基于 axios 的二次封装：统一拦截、取消重复请求、超时与通用错误处理
+ * 仅在类型位置引入 axios 类型，兼容 verbatimModuleSyntax
  */
 
-import axios, {
-  AxiosInstance,
-  AxiosRequestConfig,
-  AxiosResponse
-} from 'axios'
+import axios from 'axios'
+import type { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios'
 
 /**
  * HTTP请求类

@@ -1,6 +1,6 @@
 import request from "@/utils/request"
-import { PaginationParams } from '@/types/apiTypes/common'
-import { createNoticeData } from "@/types/apiTypes/notice"
+import type { PaginationParams } from '@/types/apiTypes/common'
+import type { createNoticeData } from "@/types/apiTypes/notice"
 
 
 /**

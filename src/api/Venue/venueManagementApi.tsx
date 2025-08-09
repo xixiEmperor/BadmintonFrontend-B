@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import { addVenueData, updateVenueData, createSpecialDateConfigData, updateSpecialDateConfigData } from "@/types/apiTypes/venueManagement";
+import type { addVenueData, updateVenueData, createSpecialDateConfigData, updateSpecialDateConfigData } from "@/types/apiTypes/venueManagement";
 
 /**
  * 获取所有场地列表
@@ -47,7 +47,8 @@ export const updateVenue = (id: number, data: updateVenueData) => {
  * @returns {Promise}
  */
 export const updateVenueStatus = (id: number, status: number) => {
-  return request.put(`/api/venue/status/${id}`, { status })
+  // 后端按文档使用 Query 接收 status，这里通过 URL 传参确保兼容
+  return request.put(`/api/venue/status/${id}?status=${status}`)
 }
 
 /**

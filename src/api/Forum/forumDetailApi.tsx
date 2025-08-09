@@ -1,5 +1,5 @@
 import request from "@/utils/request";
-import { GetForumCommentsParams } from "@/types/apiTypes/forumDetail";
+import type { GetForumCommentsParams } from "@/types/apiTypes/forumDetail";
 
 // 获取论坛帖子详情
 export const getForumDetail = (postId: number) => {
