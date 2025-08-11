@@ -1,6 +1,10 @@
 /**
  * 特殊日期配置 Store
  * - 列表/详情/增删改
+ *
+ * 兼容性说明：
+ * - 后端有时返回 { data: { list, total } }，有时直接返回数组，因此使用 unwrap/类型守卫做兼容
+ * - 翻页：每次 create/update 之后，按当前 pagination 重新刷新列表，确保视图与服务端一致
  */
 import { create } from 'zustand'
 import {

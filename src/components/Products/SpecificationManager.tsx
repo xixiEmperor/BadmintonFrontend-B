@@ -192,88 +192,152 @@ export default function SpecificationManager({ open, product, onOk, onCancel }: 
   }
 
   const handleGenerate = () => {
-    // 解析输入为规格映射，支持中英文逗号、空白、分号、顿号分隔，并去重
+    // 1. 解析用户输入的规格数据，构建规格映射表
     const specMap: Record<string, string[]> = {}
+    
+    // 遍历每一行规格输入（每行包含规格名和可选值）
     specKVs.forEach(({ key, values }) => {
+      // 清理规格名，移除首尾空白字符
       const cleanKey = key.trim()
+      
+      // 2. 解析可选值字符串，支持多种分隔符
+      // 使用正则表达式分割：支持中文逗号、英文逗号、顿号、分号、空白字符
       const parts = values
-        .split(/[，,、;；\s]+/)
-        .map((v) => v.trim())
-        .filter(Boolean)
+        .split(/[，,、;；\s]+/)  // 正则匹配多种分隔符
+        .map((v) => v.trim())    // 清理每个值的首尾空白
+        .filter(Boolean)         // 过滤空字符串
+      
+      // 3. 去除重复值，确保每个规格值的唯一性
       const uniqueVals = Array.from(new Set(parts))
-      if (cleanKey && uniqueVals.length) specMap[cleanKey] = uniqueVals
+      
+      // 4. 只有规格名和可选值都不为空时，才添加到映射表
+      if (cleanKey && uniqueVals.length) {
+        specMap[cleanKey] = uniqueVals
+      }
     })
+    
+    // 5. 检查是否有有效的规格数据
     const keys = Object.keys(specMap)
     if (!keys.length) {
       return message.warning('请先填写至少一组规格与可选值')
     }
-    // 全排列（笛卡尔积）
+    
+    // 6. 生成笛卡尔积组合（递归算法）
+    // 这个函数会生成所有可能的规格组合
     const combine = (idx: number, acc: Record<string, string>): GeneratedRow[] => {
+      // 递归终止条件：已经处理完所有规格维度
       if (idx === keys.length) {
-        return [{ id: JSON.stringify(acc), specifications: acc, priceAdjustment: 0, stock: 0 }]
+        // 创建一个规格组合记录，使用JSON.stringify作为唯一ID
+        return [{ 
+          id: JSON.stringify(acc), 
+          specifications: acc, 
+          priceAdjustment: 0,  // 默认价格调整为0
+          stock: 0             // 默认库存为0
+        }]
       }
-      const key = keys[idx]
+      
+      // 7. 递归处理当前规格维度
+      const key = keys[idx]  // 获取当前处理的规格名
       const result: GeneratedRow[] = []
+      
+      // 遍历当前规格的所有可选值
       for (const val of specMap[key]) {
+        // 递归调用，处理下一个规格维度
+        // 将当前规格值添加到累积对象中
         result.push(...combine(idx + 1, { ...acc, [key]: val }))
       }
       return result
     }
+    
+    // 8. 从第0个规格开始生成组合
     let newRows = combine(0, {})
-    // 过滤已存在的规格组合，避免重复
+    
+    // 9. 过滤已存在的规格组合，避免重复创建
     if (list.length) {
+      // 将现有规格组合转换为字符串集合，用于快速查重
       const exist = new Set(list.map((s) => JSON.stringify(s.specifications)))
+      // 过滤掉已存在的组合
       newRows = newRows.filter((r) => !exist.has(JSON.stringify(r.specifications)))
     }
+    
+    // 10. 检查是否有新的组合可以生成
     if (!newRows.length) {
       return message.info('没有新的规格组合可生成')
     }
+    
+    // 11. 更新状态，显示生成的规格组合
     setRows(newRows)
   }
 
   const handleBatchSave = async () => {
+    // 1. 检查是否有待保存的规格组合
     if (!rows.length) return message.warning('请先生成规格组合')
+    
+    // 2. 设置保存状态，防止重复提交
     setSaving(true)
     setHasStopped(false)
+    
     try {
-      // 构建任务队列
+      // 3. 创建专用的任务队列，用于并发处理规格创建
+      // 配置：最大并发2个任务，最多重试3次
       const queue = createSpecificationTaskQueue({ maxConcurrent: 2, maxRetries: 3 })
-      queueRef.current = queue
+      queueRef.current = queue  // 保存队列引用，供暂停/恢复/停止操作使用
+      
+      // 4. 建立行数据的映射关系，用于失败重试时查找原始数据
       rowMapRef.current = new Map(rows.map((r) => [r.id, r]))
+      
+      // 5. 为每个规格组合创建异步任务并添加到队列
       rows.forEach((row) => {
+        // 定义单个规格创建的异步任务
         const task = async () => {
+          // 构建API请求的数据结构
           const payload: AddSpecificationData = {
-            specifications: row.specifications,
-            priceAdjustment: row.priceAdjustment,
-            stock: row.stock,
-            status: 1,
+            specifications: row.specifications,  // 规格组合，如 {"颜色": "红色", "尺寸": "L"}
+            priceAdjustment: row.priceAdjustment, // 价格调整
+            stock: row.stock,                     // 库存数量
+            status: 1,                           // 状态：1=启用
           }
+          // 调用API创建规格
           await addProductSpecification(product.id!, payload)
         }
+        // 将任务添加到队列，使用行ID作为任务标识
         queue.addWithId(row.id, task)
       })
 
+      // 6. 订阅队列进度更新，实时显示保存进度
       const unsubscribe = queue.subscribe((p) => {
-        const total = p.total || 1
+        const total = p.total || 1  // 总任务数，防止除零
+        // 计算完成百分比（包括成功和失败的任务）
         setPercent(Math.floor(((p.completed + p.failed) / total) * 100))
+        // 更新进度文本显示
         setProgressText(`已完成 ${p.completed}/${total}，失败 ${p.failed}，进行中 ${p.running}`)
       })
 
+      // 7. 启动队列执行，等待所有任务完成
       await queue.start()
+      
+      // 8. 取消进度订阅，避免内存泄漏
       unsubscribe()
 
+      // 9. 所有任务完成后的后续处理
       message.success('批量保存完成')
+      
+      // 10. 重新获取最新的规格列表，确保UI数据同步
       const listRes = await getProductSpecifications(product.id!)
       const l = ((listRes as any)?.data ?? listRes) as ProductSpecification[]
       setList(l)
+      
+      // 11. 通知父组件保存完成
       onOk()
     } catch (e: any) {
+      // 12. 错误处理：区分用户主动停止和其他错误
       if (hasStopped) {
-        message.info('已停止')
+        message.info('已停止')  // 用户主动停止的提示
       } else {
-        message.error(e?.message || '批量保存失败')
+        message.error(e?.message || '批量保存失败')  // 其他错误的提示
       }
     } finally {
+      // 13. 无论成功还是失败，都要重置保存状态
       setSaving(false)
     }
   }

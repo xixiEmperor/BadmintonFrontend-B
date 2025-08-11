@@ -3,19 +3,43 @@ import type { periodParams, revenueTrendParams, limitParams } from '@/types/apiT
 
 /**
  * 获取仪表板概览数据
- * @returns {Promise<Object>} 系统整体统计数据
+ * 
+ * 数据流程：
+ * 1. 发送GET请求到后端分析服务的仪表板端点
+ * 2. 后端聚合各模块的关键指标数据
+ * 3. 返回包含用户总数、预约总数、收入统计等核心指标的概览数据
+ * 
+ * @returns {Promise<Object>} 系统整体统计数据，包含：
+ *   - 用户相关：总用户数、今日新增用户、活跃用户等
+ *   - 预约相关：总预约数、今日预约、预约收入等  
+ *   - 商城相关：订单总数、今日订单、商城收入等
+ *   - 论坛相关：帖子总数、今日发帖、活跃用户等
  */
 export const getDashboardOverview = () => {
+  // 调用统一的请求封装，发送GET请求获取仪表板概览数据
+  // 该接口通常返回实时计算的系统核心指标，用于首页数据卡片展示
   return request.get('/api/analytics/dashboard')
 }
 
 /**
  * 获取用户注册趋势图表数据
+ * 
+ * 业务逻辑：
+ * 1. 根据传入的时间周期参数查询用户注册数据
+ * 2. 后端按日期聚合注册用户数量
+ * 3. 返回适用于折线图/柱状图展示的时序数据
+ * 
  * @param {Object} params - 查询参数
  * @param {string} [params.period='30d'] - 时间周期 (7d/30d/90d)
- * @returns {Promise<Object>} 用户注册趋势数据
+ * @returns {Promise<Object>} 用户注册趋势数据，格式：
+ *   - type: 'line' | 'bar' - 图表类型
+ *   - title: string - 图表标题
+ *   - labels: string[] - X轴日期标签
+ *   - data: number[] - Y轴注册数量数据
  */
 export const getUserRegistrationTrend = (params: periodParams) => {
+  // 将查询参数作为URL query string发送到后端
+  // params包含period字段，用于指定统计的时间范围
   return request.get('/api/analytics/charts/user-registration-trend', { params })
 }
 

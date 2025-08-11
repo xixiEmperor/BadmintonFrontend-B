@@ -1,7 +1,8 @@
 /**
  * HTTP 请求封装工具类
- * 基于 axios 的二次封装：统一拦截、取消重复请求、超时与通用错误处理
- * 仅在类型位置引入 axios 类型，兼容 verbatimModuleSyntax
+ * - 基于 axios 的二次封装：统一拦截、取消重复请求、超时与通用错误处理
+ * - 通过 AbortController 防重复与主动取消相同 url+method 的并行请求
+ * - 注意：若后端返回结构不统一（有时包 data，有时不包），上层应做一次 unwrap 以兼容
  */
 
 import axios from 'axios'
@@ -31,6 +32,9 @@ class HttpRequest {
    * 设置基础URL、请求头、超时时间等默认配置
    * @returns 返回axios配置对象
    */
+  /**
+   * 获取 axios 默认配置
+   */
   getInsideConfig() {
     const config = {
       baseURL: this.baseUrl, // 设置请求的基础URL
@@ -48,6 +52,9 @@ class HttpRequest {
    * @param key 请求的唯一标识（url + method）
    * @param isRequest 是否为请求阶段，true表示在发送请求前调用
    */
+  /**
+   * 移除待处理的请求（如果在请求阶段发现重复，则取消旧请求）
+   */
   removePending(key: string, isRequest = false) {
     // 如果存在相同的请求且是在请求阶段，则取消该请求
     if (this.pending[key] && isRequest) {
@@ -61,6 +68,11 @@ class HttpRequest {
    * 设置请求和响应拦截器
    * 在请求发送前和响应返回后进行统一处理
    * @param instance axios实例
+   */
+  /**
+   * 注册请求/响应拦截器：
+   * - 请求：注入 token、去重、注入 AbortController.signal
+   * - 响应：统一成功/失败的 Promise 语义、清理去重表
    */
   interceptors(instance: AxiosInstance) {
     // 请求拦截器：在发送请求前执行
@@ -122,6 +134,9 @@ class HttpRequest {
    * @param options axios请求配置参数
    * @returns 返回Promise对象
    */
+  /**
+   * 统一请求入口
+   */
   request(options: AxiosRequestConfig) {
     // 创建axios实例
     const instance = axios.create()
@@ -139,6 +154,7 @@ class HttpRequest {
    * @param config 可选的axios配置参数
    * @returns 返回Promise<AxiosResponse>
    */
+  /** 便捷 GET */
   get(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse> {
     // 构建GET请求的配置对象
     const options = Object.assign(
@@ -158,6 +174,7 @@ class HttpRequest {
    * @param data 可选的请求体数据
    * @returns 返回Promise<AxiosResponse>或Promise<HttpResponse>
    */
+  /** 便捷 POST */
   post(url: string, data?: unknown): Promise<AxiosResponse> {
     // 调用request方法发送POST请求
     return this.request({
@@ -173,6 +190,7 @@ class HttpRequest {
    * @param data 可选的请求体数据
    * @returns 返回Promise<AxiosResponse>
    */
+  /** 便捷 PUT */
   put(url: string, data?: unknown): Promise<AxiosResponse> {
     // 调用request方法发送PUT请求
     return this.request({
@@ -188,6 +206,7 @@ class HttpRequest {
    * @param config 可选的axios配置参数
    * @returns 返回Promise<AxiosResponse>
    */
+  /** 便捷 DELETE */
   delete(url: string, config?: AxiosRequestConfig): Promise<AxiosResponse> {
     // 调用request方法发送DELETE请求
     return this.request({

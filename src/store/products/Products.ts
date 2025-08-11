@@ -1,6 +1,10 @@
 /**
  * 商品 Store
  * - 管理列表/分页参数/分类缓存
+ *
+ * 兼容性说明：
+ * - 列表接口可能返回 { data: { list, total } } 或直接返回数组
+ * - 分类接口 normalize：优先取 data.list，否则取 data
  */
 import { create } from 'zustand'
 import type { Category, GetProductsParams, ProductData } from '@/types/apiTypes/products'

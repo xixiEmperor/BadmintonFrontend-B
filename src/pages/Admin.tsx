@@ -96,28 +96,37 @@ export default function Admin() {
     },
   ]
 
-  // 面包屑导航配置
+  // 面包屑导航配置生成函数
   const getBreadcrumbItems = (): BreadcrumbConfig[] => {
+    // 1. 解析当前路径，分割为路径片段数组
+    // 过滤空字符串，得到有效的路径片段
     const pathSnippets = location.pathname.split('/').filter(i => i)
     
+    // 2. 初始化面包屑数组，首项固定为首页图标
     const breadcrumbItems: BreadcrumbConfig[] = [
       {
-        title: <HomeOutlined />,
+        title: <HomeOutlined />,  // 使用图标作为首页标识
         key: 'home',
       }
     ]
 
+    // 3. 处理根路径情况（/admin 或者 /）
     if (pathSnippets.length === 0) {
+      // 如果是根路径，添加"首页"链接
       breadcrumbItems.push({
         title: <Link to='/admin' style={{ color: 'white' }}>首页</Link>,
         key: 'dashboard',
       })
     } else {
-      // 根据路径生成面包屑
+      // 4. 处理有子路径的情况，逐级构建面包屑
       pathSnippets.forEach((snippet, index) => {
+        // 4.1 构建当前层级的完整路径
+        // 取前 index+1 个片段，重新拼接成路径
         const path = `/${pathSnippets.slice(0, index + 1).join('/')}`
         let title: React.ReactNode = ''
         
+        // 4.2 根据路径片段映射对应的中文名称
+        // 这里使用switch语句进行路径到标题的映射
         switch (snippet) {
           case 'venue-management':
             title = '场地管理'
@@ -141,9 +150,12 @@ export default function Admin() {
             title = '用户管理'
             break
           default:
+            // 如果没有匹配的映射，直接使用原路径片段
             title = snippet
         }
         
+        // 4.3 将构建的面包屑项添加到数组中
+        // 每个面包屑项都是可点击的链接，方便用户快速导航
         breadcrumbItems.push({
           title: <Link to={path} style={{ color: 'white' }}>{title}</Link>,
           key: path,
@@ -151,19 +163,29 @@ export default function Admin() {
       })
     }
 
+    // 5. 返回完整的面包屑配置数组
     return breadcrumbItems
   }
 
+  // 侧边栏菜单点击处理函数
   const handleMenuClick = ({ key }: { key: string }) => {
+    // 使用React Router的navigate函数进行路由跳转
+    // key值对应菜单项的路径，直接传递给navigate进行导航
     navigate(key)
   }
 
+  // 用户下拉菜单点击处理函数
   const handleUserMenuClick = ({ key }: { key: string }) => {
+    // 根据点击的菜单项执行相应操作
     switch (key) {
       case 'logout':
-        // 处理退出登录逻辑
+        // TODO: 实现完整的退出登录逻辑
+        // 1. 清除本地存储的用户信息和token
+        // 2. 重置应用状态
+        // 3. 跳转到登录页面
         console.log('退出登录')
         break
+      // 可以在这里添加更多用户操作，如个人设置、修改密码等
     }
   }
 

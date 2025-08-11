@@ -17,47 +17,69 @@ import SpecificationManager from '@/components/Products/SpecificationManager'
 import { useProductStore } from '@/store'
 
 export default function Products() {
-  const [modal, modalContextHolder] = Modal.useModal()
-  const [loading, setLoading] = useState(false)
+  // 1. 初始化Modal实例和加载状态
+  const [modal, modalContextHolder] = Modal.useModal()  // 用于确认对话框
+  const [loading, setLoading] = useState(false)  // 控制表格的加载状态
 
+  // 2. 从商品store中获取状态和方法
+  // 使用解构赋值重命名list为data，保持组件内命名一致性
   const {
-    list: data,
-    total,
-    params,
-    categories,
-    setParams,
-    fetchList,
-    fetchCategories,
+    list: data,        // 商品列表数据
+    total,             // 商品总数（用于分页）
+    params,            // 查询参数（分页、筛选、排序）
+    categories,        // 商品分类列表
+    setParams,         // 更新查询参数的方法
+    fetchList,         // 获取商品列表的异步方法
+    fetchCategories,   // 获取分类列表的异步方法
   } = useProductStore()
 
+  // 3. 控制商品编辑对话框的状态
   const [dialogOpen, setDialogOpen] = useState<{
-    visible: boolean
-    product?: ProductData
+    visible: boolean    // 对话框是否可见
+    product?: ProductData  // 要编辑的商品数据（新增时为undefined）
   }>({ visible: false })
 
+  // 4. 控制规格管理对话框的状态
   const [specOpen, setSpecOpen] = useState<{
-    visible: boolean
-    product?: ProductData
+    visible: boolean    // 对话框是否可见
+    product?: ProductData  // 要管理规格的商品数据
   }>({ visible: false })
 
+  // 5. 组件挂载时的初始化逻辑
   useEffect(() => {
+    // 异步获取分类数据，失败时静默处理（不影响主要功能）
     fetchCategories().catch(() => {})
+    
+    // 立即执行的异步函数：获取商品列表
     ;(async () => {
-      setLoading(true)
+      setLoading(true)  // 开始加载
       try {
-        await fetchList()
+        await fetchList()  // 调用store方法获取商品数据
       } finally {
-        setLoading(false)
+        setLoading(false)  // 无论成功还是失败都要停止加载状态
       }
     })()
-  }, [fetchCategories, fetchList])
+  }, [fetchCategories, fetchList])  // 只在挂载时执行一次
 
+  // 6. 监听查询参数变化，自动重新获取数据
   useEffect(() => {
-    setLoading(true)
+    setLoading(true)  // 开始加载
     fetchList()
-      .catch((e) => message.error((e as { message?: string })?.message || '获取商品列表失败'))
-      .finally(() => setLoading(false))
-  }, [params.pageNum, params.pageSize, params.keyword, params.categoryId, params.orderBy, fetchList])
+      .catch((e) => {
+        // 提取错误信息并显示给用户
+        const errorMsg = (e as { message?: string })?.message || '获取商品列表失败'
+        message.error(errorMsg)
+      })
+      .finally(() => setLoading(false))  // 停止加载状态
+  }, [
+    // 依赖数组：当这些参数变化时重新获取数据
+    params.pageNum,     // 页码变化
+    params.pageSize,    // 每页大小变化
+    params.keyword,     // 搜索关键词变化
+    params.categoryId,  // 分类筛选变化
+    params.orderBy,     // 排序方式变化
+    fetchList           // store方法引用
+  ])
 
   const columns = useMemo<ColumnsType<ProductData>>(
     () => [
@@ -157,30 +179,44 @@ export default function Products() {
     []
   )
 
+  // 7. 删除商品的处理函数
   const handleDelete = async (id: number) => {
     try {
+      // 调用API删除商品
       await deleteProduct(id)
       message.success('删除成功')
+      // 删除成功后重新获取列表，确保UI同步
       fetchList()
     } catch (e: any) {
+      // 删除失败时显示错误信息
       message.error(e?.message || '删除失败')
     }
   }
+  
+  // 8. 商品上架的处理函数
   const handleOnSale = async (id: number) => {
     try {
+      // 调用API将商品状态设置为上架
       await onSaleProduct(id)
       message.success('已上架')
+      // 上架成功后重新获取列表，更新商品状态显示
       fetchList()
     } catch (e: any) {
+      // 上架失败时显示错误信息
       message.error(e?.message || '操作失败')
     }
   }
+  
+  // 9. 商品下架的处理函数
   const handleOffSale = async (id: number) => {
     try {
+      // 调用API将商品状态设置为下架
       await offSaleProduct(id)
       message.success('已下架')
+      // 下架成功后重新获取列表，更新商品状态显示
       fetchList()
     } catch (e: any) {
+      // 下架失败时显示错误信息
       message.error(e?.message || '操作失败')
     }
   }

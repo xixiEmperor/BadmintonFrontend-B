@@ -8,7 +8,7 @@ import type {
   Category
 } from "@/types/apiTypes/products";
 
-// 后端 ProductAddDto 要求 subImages 为以逗号分隔的字符串
+// 说明：后端 ProductAddDto 要求 subImages 为以逗号分隔的字符串
 function normalizeProductPayload(data: AddProductData | UpdateProductData) {
   const payload: Record<string, unknown> = { ...data }
   if (Array.isArray((payload as any).subImages)) {
