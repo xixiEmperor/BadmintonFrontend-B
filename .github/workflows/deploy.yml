@@ -1,0 +1,106 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+
+    - name: Setup pnpm
+      uses: pnpm/action-setup@v4
+      with:
+        version: latest
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Run lint
+      run: pnpm run lint
+
+    - name: Build project
+      run: pnpm run build
+
+    # 部署步骤 - 根据你的需求取消注释以下任一部署选项：
+
+    # 选项1：部署到 GitHub Pages（推荐用于静态站点）
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      if: github.ref == 'refs/heads/main'
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./dist
+
+    # 选项2：部署到自定义服务器（使用 SSH）
+    # - name: Deploy to server
+    #   uses: appleboy/scp-action@master
+    #   if: github.ref == 'refs/heads/main'
+    #   with:
+    #     host: ${{ secrets.SERVER_HOST }}
+    #     username: ${{ secrets.SERVER_USER }}
+    #     key: ${{ secrets.SSH_PRIVATE_KEY }}
+    #     port: ${{ secrets.SERVER_PORT || 22 }}
+    #     source: "dist/*"
+    #     target: "/path/to/your/deployment/directory"
+    #     strip_components: 1
+
+    # 选项3：部署到 Netlify
+    # - name: Deploy to Netlify
+    #   uses: nwtgck/actions-netlify@v2
+    #   if: github.ref == 'refs/heads/main'
+    #   with:
+    #     publish-dir: './dist'
+    #     production-deploy: true
+    #     github-token: ${{ secrets.GITHUB_TOKEN }}
+    #   env:
+    #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+    #     NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+    # 选项4：部署到 Vercel
+    # - name: Deploy to Vercel
+    #   uses: amondnet/vercel-action@v25
+    #   if: github.ref == 'refs/heads/main'
+    #   with:
+    #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
+    #     github-token: ${{ secrets.GITHUB_TOKEN }}
+    #     vercel-args: '--prod'
+    #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+    #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+    #     working-directory: ./
+
+    # 选项5：部署到自定义 Docker 容器
+    # - name: Build and push Docker image
+    #   uses: docker/build-push-action@v4
+    #   if: github.ref == 'refs/heads/main'
+    #   with:
+    #     context: .
+    #     push: true
+    #     tags: your-registry/your-image:latest
+    #     file: Dockerfile
+    #   env:
+    #     DOCKER_BUILDKIT: 1
+
+    # 示例：如果需要部署到服务器，可以使用 rsync
+    # - name: Deploy with rsync
+    #   uses: burnett01/rsync-deployments@5.2
+    #   if: github.ref == 'refs/heads/main'
+    #   with:
+    #     switches: -avzr --delete
+    #     path: dist/
+    #     remote_path: /var/www/html/
+    #     remote_host: ${{ secrets.DEPLOY_HOST }}
+    #     remote_user: ${{ secrets.DEPLOY_USER }}
+    #     remote_key: ${{ secrets.DEPLOY_KEY }}
