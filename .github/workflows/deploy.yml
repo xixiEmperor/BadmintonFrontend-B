@@ -1,106 +1,92 @@
-name: CI/CD Pipeline
+name: 部署到 GitHub Pages
 
 on:
+  # 在推送到 master 分支时触发
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  
+  # 允许手动触发工作流
+  workflow_dispatch:
+
+# 设置 GITHUB_TOKEN 的权限，允许部署到 GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 只允许一个并发部署，跳过正在运行和最新排队之间的运行队列
+# 但是，不要取消正在进行的运行，因为我们希望让这些生产部署完成
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
+  # 构建工作
+  build:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: 检出代码
+        uses: actions/checkout@v4
+        
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+          
+      - name: 设置 Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          
+      - name: 验证环境
+        run: |
+          echo "Node.js version: $(node --version)"
+          echo "pnpm version: $(pnpm --version)"
+          echo "当前工作目录: $(pwd)"
+          echo "文件列表:"
+          ls -la
+          
+      - name: 安装依赖
+        run: |
+          echo "开始安装依赖..."
+          pnpm install --no-frozen-lockfile
+          echo "依赖安装完成"
+          
+      - name: 检查依赖
+        run: |
+          echo "检查已安装的依赖..."
+          pnpm list --depth=0
+          
+      - name: 构建项目
+        run: |
+          echo "开始构建项目..."
+          echo "NODE_ENV: $NODE_ENV"
+          pnpm run build
+          echo "构建完成"
+          
+      - name: 检查构建结果
+        run: |
+          echo "检查构建产物..."
+          ls -la dist/
+          echo "dist目录大小:"
+          du -sh dist/
+          
+      - name: 设置 Pages
+        uses: actions/configure-pages@v4
+        
+      - name: 上传构建产物
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./dist
 
-    - name: Setup Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '18'
-        cache: 'npm'
-
-    - name: Setup pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: latest
-
-    - name: Install dependencies
-      run: pnpm install
-
-    - name: Run lint
-      run: pnpm run lint
-
-    - name: Build project
-      run: pnpm run build
-
-    # 部署步骤 - 根据你的需求取消注释以下任一部署选项：
-
-    # 选项1：部署到 GitHub Pages（推荐用于静态站点）
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      if: github.ref == 'refs/heads/main'
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./dist
-
-    # 选项2：部署到自定义服务器（使用 SSH）
-    # - name: Deploy to server
-    #   uses: appleboy/scp-action@master
-    #   if: github.ref == 'refs/heads/main'
-    #   with:
-    #     host: ${{ secrets.SERVER_HOST }}
-    #     username: ${{ secrets.SERVER_USER }}
-    #     key: ${{ secrets.SSH_PRIVATE_KEY }}
-    #     port: ${{ secrets.SERVER_PORT || 22 }}
-    #     source: "dist/*"
-    #     target: "/path/to/your/deployment/directory"
-    #     strip_components: 1
-
-    # 选项3：部署到 Netlify
-    # - name: Deploy to Netlify
-    #   uses: nwtgck/actions-netlify@v2
-    #   if: github.ref == 'refs/heads/main'
-    #   with:
-    #     publish-dir: './dist'
-    #     production-deploy: true
-    #     github-token: ${{ secrets.GITHUB_TOKEN }}
-    #   env:
-    #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-    #     NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-
-    # 选项4：部署到 Vercel
-    # - name: Deploy to Vercel
-    #   uses: amondnet/vercel-action@v25
-    #   if: github.ref == 'refs/heads/main'
-    #   with:
-    #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
-    #     github-token: ${{ secrets.GITHUB_TOKEN }}
-    #     vercel-args: '--prod'
-    #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-    #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-    #     working-directory: ./
-
-    # 选项5：部署到自定义 Docker 容器
-    # - name: Build and push Docker image
-    #   uses: docker/build-push-action@v4
-    #   if: github.ref == 'refs/heads/main'
-    #   with:
-    #     context: .
-    #     push: true
-    #     tags: your-registry/your-image:latest
-    #     file: Dockerfile
-    #   env:
-    #     DOCKER_BUILDKIT: 1
-
-    # 示例：如果需要部署到服务器，可以使用 rsync
-    # - name: Deploy with rsync
-    #   uses: burnett01/rsync-deployments@5.2
-    #   if: github.ref == 'refs/heads/main'
-    #   with:
-    #     switches: -avzr --delete
-    #     path: dist/
-    #     remote_path: /var/www/html/
-    #     remote_host: ${{ secrets.DEPLOY_HOST }}
-    #     remote_user: ${{ secrets.DEPLOY_USER }}
-    #     remote_key: ${{ secrets.DEPLOY_KEY }}
+  # 部署工作
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: 部署到 GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4 
