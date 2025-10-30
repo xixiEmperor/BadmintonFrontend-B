@@ -14,13 +14,14 @@ const Orders = lazy(() => import('@/pages/Shop/Orders'))
 const VenueManagement = lazy(() => import('@/pages/Venue/VenueManagement'))
 const UserManagement = lazy(() => import('@/pages/User/UserManagement'))
 
-// 获取base path
+// 获取base path - 根据环境动态设置基础路径
 const getBasePath = () => {
   if (window.__POWERED_BY_WUJIE__) {
     // 在无界环境中，路由由主应用管理
     return ''
   }
-  return ''
+  // 在生产环境中使用 GitHub Pages 的仓库名作为基础路径
+  return import.meta.env.PROD ? '/BadmintonFrontend-B' : ''
 }
 
 const router = createBrowserRouter([
