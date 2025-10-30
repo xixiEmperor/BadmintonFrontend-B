@@ -28,8 +28,6 @@ declare global {
   }
 }
 
-console.log(window.$wujie.props)
-
 let root: any = null
 const queryClient = new QueryClient()
 

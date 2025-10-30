@@ -24,6 +24,23 @@ export default defineConfig({
     outDir: 'dist',
     assetsDir: 'assets',
     sourcemap: false,
-    minify: 'esbuild',
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        dead_code: true,
+        unused: true,
+        collapse_vars: true,
+        side_effects: true,
+      },
+      mangle: {
+        keep_classnames: true,
+        keep_fnames: true,
+      },
+      format: {
+        comments: false,
+      }
+    }
   },
 })
